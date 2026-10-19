@@ -1,0 +1,157 @@
+{
+  "name": "MiroFish v0.1 Swarm Intelligence Engine",
+  "description": "Simulate many AI agents to explore how events and opinions unfold.",
+  "category": "AI/ML",
+  "tags": [
+    "mirofish",
+    "multi-agent",
+    "agent-simulation",
+    "swarm-intelligence",
+    "social-simulation",
+    "oasis",
+    "llm",
+    "zep"
+  ],
+  "image": "https://cdn.jsdelivr.net/gh/666ghj/MiroFish@7657031ac01184afe2cb220f5ee3545573b5e843/frontend/public/icon.png",
+  "upstream": {
+    "repo": "666ghj/MiroFish",
+    "version": "main @ 7657031 (2026-10-01; app code last changed 2026-07-23, 103 commits after v0.1.2) on the v0.1.2 image's Python environment",
+    "checked": "2026-10-20"
+  },
+  "services": {
+    "Web": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/caddy.svg",
+      "source": {
+        "repo": "baranberkay96/mirofish-railway",
+        "rootDirectory": "/services/web"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": "/healthz",
+      "healthcheckTimeout": 120,
+      "restartPolicyType": "ALWAYS",
+      "restartPolicyMaxRetries": null,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": true,
+      "targetPort": 8080,
+      "tcpProxy": null,
+      "volume": null,
+      "variables": {
+        "PORT": {
+          "defaultValue": "8080",
+          "description": "Caddy port (public domain target); only /healthz and /health skip the login.",
+          "required": false
+        },
+        "BASIC_AUTH_USERNAME": {
+          "defaultValue": "admin",
+          "description": "Login name for the MiroFish UI and API (letters, digits, . _ @ -).",
+          "required": false
+        },
+        "BASIC_AUTH_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Login password for the MiroFish UI and API. Generated; read it here.",
+          "required": false
+        },
+        "MIROFISH_BACKEND": {
+          "defaultValue": "${{MiroFish.RAILWAY_PRIVATE_DOMAIN}}:5001",
+          "description": "Private address of the MiroFish backend that /api/* is forwarded to.",
+          "required": false
+        }
+      }
+    },
+    "MiroFish": {
+      "icon": "https://cdn.jsdelivr.net/gh/666ghj/MiroFish@7657031ac01184afe2cb220f5ee3545573b5e843/frontend/public/icon.png",
+      "source": {
+        "repo": "baranberkay96/mirofish-railway",
+        "rootDirectory": "/services/mirofish"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": "/health",
+      "healthcheckTimeout": 600,
+      "restartPolicyType": "ALWAYS",
+      "restartPolicyMaxRetries": null,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/app/backend/uploads"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "5001",
+          "description": "Backend (Flask) listen port; Railway health-checks /health on it.",
+          "required": false
+        },
+        "LLM_API_KEY": {
+          "defaultValue": "",
+          "description": "Required. API key of your OpenAI-compatible LLM provider (billed by that provider).",
+          "required": true
+        },
+        "LLM_BASE_URL": {
+          "defaultValue": "https://api.openai.com/v1",
+          "description": "OpenAI-compatible API base URL (OpenAI, DashScope, OpenRouter, vLLM, ...).",
+          "required": false
+        },
+        "LLM_MODEL_NAME": {
+          "defaultValue": "gpt-4o-mini",
+          "description": "Model id used for graph building, agent personas, simulation and reports.",
+          "required": false
+        },
+        "ZEP_API_KEY": {
+          "defaultValue": "",
+          "description": "Required. Zep Cloud API key (app.getzep.com) for the knowledge graph and agent memory.",
+          "required": true
+        },
+        "OASIS_DEFAULT_MAX_ROUNDS": {
+          "defaultValue": "10",
+          "description": "Default simulation rounds. More rounds = many more LLM calls and cost.",
+          "required": false
+        },
+        "LLM_BOOST_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Second OpenAI-compatible key; parallel runs use it for the Reddit agents.",
+          "required": false
+        },
+        "LLM_BOOST_BASE_URL": {
+          "defaultValue": "",
+          "description": "Optional. Base URL for LLM_BOOST_API_KEY (set all three LLM_BOOST_* or none).",
+          "required": false
+        },
+        "LLM_BOOST_MODEL_NAME": {
+          "defaultValue": "",
+          "description": "Optional. Model id for LLM_BOOST_API_KEY.",
+          "required": false
+        },
+        "SECRET_KEY": {
+          "defaultValue": "${{secret(48, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Flask secret key (generated; replaces upstream's built-in default).",
+          "required": false
+        },
+        "FLASK_DEBUG": {
+          "defaultValue": "false",
+          "description": "Keep false. true turns on Flask debug mode, never for a public deployment.",
+          "required": false
+        },
+        "FLASK_HOST": {
+          "defaultValue": "::",
+          "description": "Listen address. :: serves IPv4 and IPv6; use 0.0.0.0 only if IPv4-only is needed.",
+          "required": false
+        },
+        "MIROFISH_CPU_THREADS": {
+          "defaultValue": "",
+          "description": "Optional. Torch/BLAS threads for simulations; empty = from CPU quota, max 8.",
+          "required": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "30",
+          "description": "Shutdown grace so running simulation processes are stopped cleanly on redeploy.",
+          "required": false
+        }
+      }
+    }
+  }
+}
