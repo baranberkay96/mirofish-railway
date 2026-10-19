@@ -1,5 +1,7 @@
 # Deploy and Host MiroFish with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/mirofish-v01-swarm-intelligence-engine?referralCode=20H68q)
+
 MiroFish is an open-source (AGPL-3.0) multi-agent simulation engine: feed it documents and a scenario, and it builds a knowledge graph, turns the people and organisations in it into LLM agents, lets them post and react on simulated social platforms, and writes up what happened. This community template runs it behind a login on one HTTPS URL.
 
 ## About Hosting MiroFish
